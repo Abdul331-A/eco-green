@@ -2,15 +2,13 @@
 import { Route, Routes, useLocation } from 'react-router-dom'
 import './App.css'
 import Navbar from './components/Navbar'
-import { Toaster } from 'react-hot-toast'
+import toast, { Toaster } from 'react-hot-toast'
 
-
-import React from 'react'
 import Home from './pages/Home'
 
 const App = () => {
     const isSellerPath=useLocation().pathname.includes("seller")
-  
+    toast.success("Welcome to Green!")
   return (
     <div>
      {isSellerPath?null:<Navbar/>} 
