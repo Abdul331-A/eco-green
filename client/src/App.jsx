@@ -5,6 +5,7 @@ import Navbar from './components/Navbar'
 import toast, { Toaster } from 'react-hot-toast'
 
 import Home from './pages/Home'
+import Footer from './components/Footer'
 
 const App = () => {
     const isSellerPath=useLocation().pathname.includes("seller")
@@ -18,6 +19,7 @@ const App = () => {
           <Route path='/' element={<Home/>}/>
         </Routes>
       </div>
+        {!isSellerPath && <Footer/>}
     </div>
   )
 }
