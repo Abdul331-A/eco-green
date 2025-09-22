@@ -38,12 +38,16 @@ const ProductCard = ({ product }) => {
     // }
 
     useEffect(() => {
-        if (count === 0) {
-            removeFromcart(product?._id);
-            return;
-        } else {
-            updateCartItem(product?._id, count)
-        }
+            console.log("count changed:", count);
+            if(count === 0 && cartItems[product?._id]===1){
+                console.log("removing item from cart");
+                removeFromcart(product?._id);
+                return;
+            }else if(count >= 1 && cartItems[product?._id] >= 1){
+                console.log("updating cart item quantity");
+                updateCartItem(product?._id, count)
+            }
+        
     }, [count]);
 
     return product && (

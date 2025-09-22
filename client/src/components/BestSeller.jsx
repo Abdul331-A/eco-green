@@ -5,6 +5,7 @@ import { AppContext } from '../context/AppContext';
 const BestSeller = () => {
     const {products}=React.useContext(AppContext);
     console.log("products in best seller:", products);
+
     
     return (
         <div className='mt-16'>
