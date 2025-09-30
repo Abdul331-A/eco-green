@@ -38,20 +38,23 @@ const ProductCard = ({ product }) => {
     // }
 
     useEffect(() => {
-            console.log("count changed:", count);
-            if(count === 0 && cartItems[product?._id]===1){
-                console.log("removing item from cart");
-                removeFromcart(product?._id);
-                return;
-            }else if(count >= 1 && cartItems[product?._id] >= 1){
-                console.log("updating cart item quantity");
-                updateCartItem(product?._id, count)
-            }
-        
+        console.log("count changed:", count);
+        if (count === 0 && cartItems[product?._id] === 1) {
+            console.log("removing item from cart");
+            removeFromcart(product?._id);
+            return;
+        } else if (count >= 1 && cartItems[product?._id] >= 1) {
+            console.log("updating cart item quantity");
+            updateCartItem(product?._id, count)
+        }
+
     }, [count]);
 
     return product && (
-        <div className="border border-gray-500/20 rounded-md md:px-4 px-3 py-2 bg-white min-w-56 max-w-56 w-full">
+        <div onClick={() => {
+            navigate(`/products/${product.category.toLowerCase()
+                }/${product._id}`); scrollTo(0, 0);
+        }} className="border border-gray-500/20 rounded-md md:px-4 px-3 py-2 bg-white min-w-56 max-w-56 w-full">
             <div className="group cursor-pointer flex items-center justify-center px-2">
                 <img className="group-hover:scale-105 transition max-w-26 md:max-w-36" src={product?.image[0]} alt={product?.name} />
             </div>
@@ -76,7 +79,7 @@ const ProductCard = ({ product }) => {
                                 <button className="flex items-center justify-center gap-1 bg-primtext-primary-100 border border-primtext-primary-300 md:w-[80px] w-[64px] h-[34px] rounded text-primary-600 " onClick={() => {
                                     addToCart(product?._id)
                                     setCount((prev) => prev + 1)
-                                    }} >
+                                }} >
                                     <img src={assets.cart_icon} alt="cart" className='md:w-4 w-3' />
                                     Add
                                 </button>

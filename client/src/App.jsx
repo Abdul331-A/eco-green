@@ -10,6 +10,8 @@ import Login from './components/Login'
 import { AppContext, AppContextProvider } from './context/AppContext'
 import { useContext } from 'react'
 import AllProduct from './pages/AllProduct'
+import ProductCatgories from './pages/ProductCatgories'
+import ProductDetails from './pages/ProductDetails'
 
 const App = () => {
   const isSellerPath = useLocation().pathname.includes("seller")
@@ -25,7 +27,10 @@ const { showUserLogin } = useContext(AppContext);
       <div className={`${isSellerPath ? "" : "px-6 md:px-16 lg:px-24 xl:px-32"}`}>
         <Routes>
           <Route path='/' element={<Home />} />
-          <Route path='/products' element={<AllProduct />} />
+          <Route path='/product' element={<AllProduct />} />
+          <Route path='/products/:category' element={<ProductCatgories />} />
+          <Route path='/products/:category/:id' element={<ProductDetails />} />
+
         </Routes>
       </div>
       {!isSellerPath && <Footer />}
@@ -35,4 +40,3 @@ const { showUserLogin } = useContext(AppContext);
 }
 
 export default App
-
