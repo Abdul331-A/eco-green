@@ -19,7 +19,7 @@ export const AppContextProvider = ({ children }) => {
     const [searchQuery, setSearchQuery] = useState({});
 
     // console.log("cartItems:", cartItems);
-    
+
 
 
     const fetchProducts = async () => {
@@ -28,15 +28,15 @@ export const AppContextProvider = ({ children }) => {
     //add product to cart
     const addToCart = (itemId) => {
         console.log("itemId::::::", itemId);
-// return
+        // return
         let cartData = structuredClone(cartItems);
-        console.log("hesgg:::",structuredClone(cartItems));
-        
+        console.log("hesgg:::", structuredClone(cartItems));
+
         // return
         if (cartData[itemId]) { // Corrected line
             cartData[itemId] += 1;
             console.log("if cartData[itemId]:", cartData);
-            
+
         } else {
             cartData[itemId] = 1;
             console.log("else cartData[itemId]:", cartData);
@@ -45,7 +45,7 @@ export const AppContextProvider = ({ children }) => {
         toast.success("Item added to cart")
     }
     //update cart item quantity
-    const updateCartItem = (itemId,qty) => {
+    const updateCartItem = (itemId, qty) => {
         let cartData = structuredClone(cartItems);
         cartData[itemId] = qty;
         setCartItems(cartData);
@@ -64,18 +64,41 @@ export const AppContextProvider = ({ children }) => {
         toast.success("Item removed from cart");
     }
 
+    // get cart item count
+    const getCartCount = () => {
+        let totalCount = 0;
+        for (const item in cartItems) {
+            totalCount += cartItems[item];
+        }
+        
+        return totalCount;
+    }
+    // get cart total amount
+    const getCartAmount = () => {
+        let totalAmount = 0;
+        for (const item in cartItems) {
+            let itemInfo = products.find((products) => product.__id === item);
+            if (cartItems[item] > 0) {
+                totalAmount += itemInfo.offerPrice * cartItem[item];
+            }
+
+        }
+        return Math.floor(totalAmount * 100) / 100;
+
+    }
 
 
     useEffect(() => {
         console.log("fetching products");
-        
+
         fetchProducts();
     }, []);
 
 
     const value = {
         navigate, user, setUser, isSeller, setIsSeller, showUserLogin, setShowUserLogin, products,
-        currency, addToCart, removeFromcart, cartItems, updateCartItem,searchQuery,setSearchQuery
+        currency, addToCart, removeFromcart, cartItems, updateCartItem, searchQuery, setSearchQuery,
+        getCartCount, getCartAmount
     }
     return <AppContext.Provider value={value}>
         {children}

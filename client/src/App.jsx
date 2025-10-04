@@ -1,7 +1,7 @@
 
 import { Route, Routes, useLocation } from 'react-router-dom'
 import './App.css'
-import Navbar from './components/Navbar'
+// import Navbar from './components/Navbar'
 import toast, { Toaster } from 'react-hot-toast'
 
 import Home from './pages/Home'
@@ -12,11 +12,13 @@ import { useContext } from 'react'
 import AllProduct from './pages/AllProduct'
 import ProductCatgories from './pages/ProductCatgories'
 import ProductDetails from './pages/ProductDetails'
+import Navbar from './components/navbar'
+import Cart from './pages/Cart'
 
 const App = () => {
   const isSellerPath = useLocation().pathname.includes("seller")
   // toast.success("Welcome to Green!")
-const { showUserLogin } = useContext(AppContext);
+  const { showUserLogin } = useContext(AppContext);
   return (
     <div>
       {isSellerPath ? null : <Navbar />}
@@ -30,6 +32,7 @@ const { showUserLogin } = useContext(AppContext);
           <Route path='/product' element={<AllProduct />} />
           <Route path='/products/:category' element={<ProductCatgories />} />
           <Route path='/products/:category/:id' element={<ProductDetails />} />
+          <Route path='/cart' element={<Cart />} />
 
         </Routes>
       </div>
