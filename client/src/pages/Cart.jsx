@@ -47,7 +47,7 @@ const Cart = () => {
             <div className="flex flex-col md:flex-row py-16 max-w-6xl w-full px-6 mt-16">
                 <div className='flex-1 max-w-4xl'>
                     <h1 className="text-3xl font-medium mb-6">
-                        Shopping Cart <span className="text-sm text-indigo-500">{getCartCount()}items</span>
+                        Shopping Cart <span className="text-sm text-primary">{getCartCount()}items</span>
                     </h1>
 
                     <div className="grid grid-cols-[2fr_1fr_1fr] text-gray-500 text-base font-medium pb-3">
@@ -57,6 +57,7 @@ const Cart = () => {
                     </div>
 
                     {cartArray?.map((product, index) => (
+                        
                         <div key={index} className="grid grid-cols-[2fr_1fr_1fr] text-gray-500 items-center text-sm md:text-base font-medium pt-3">
                             <div className="flex items-center md:gap-6 gap-3">
                                 <div onClick={() => {
@@ -70,7 +71,7 @@ const Cart = () => {
                                         <p>weight: <span>{product.weight || "N/A"}</span></p>
                                         <div className='flex items-center'>
                                             <p>Qty:</p>
-                                            <select className='outline-none'>
+                                            <select onChange={e=>updateCartItem(product._id,Number(e.target.value))} value={cartItems[product._id]} className='outline-none'>
                                                 {Array(cartItems[product._id] > 9 ? cartItems[product._id] : 9).fill('').map((_, index) => (
                                                     <option key={index} value={index + 1}>{index + 1}</option>
                                                 ))}
@@ -80,13 +81,12 @@ const Cart = () => {
                                 </div>
                             </div>
                             <p className="text-center">{currency}{product.offerPrice * product.quantity}</p>
-                            <button onClick={() => removeFromCart()} className="cursor-pointer mx-auto">
+                            <button onClick={() => removeFromCart(product._id)} className="cursor-pointer mx-auto">
                                 <img src={assets.remove_icon} alt="remove" className='inline-block w-6 h-6' />
                             </button>
                         </div>)
                     )}
-
-                    <button onClick={() => { navigate('/product'); scrollTo(0, 0) }} className="group cursor-pointer flex items-center mt-8 gap-2 text-indigo-500 font-medium">
+                    <button onClick={() => { navigate('/product'); scrollTo(0, 0) }} className="group cursor-pointer flex items-center mt-8 gap-2 text-primary font-medium">
 
                         <img src={assets.arrow_right_icon_colored} alt="arrow" className='group-hover:-translate-x-1 transition' />
                         Continue Shopping
@@ -102,7 +102,7 @@ const Cart = () => {
                         <p className="text-sm font-medium uppercase">Delivery Address</p>
                         <div className="relative flex justify-between items-start mt-2">
                             <p className="text-gray-500">{selectAddress ? `${selectAddress.street},${selectAddress.city},${selectAddress.state},${selectAddress.country}` : "No address found"}</p>
-                            <button onClick={() => setShowAddress(!showAddress)} className="text-indigo-500 hover:underline cursor-pointer">
+                            <button onClick={() => setShowAddress(!showAddress)} className="text-primary hover:underline cursor-pointer">
                                 Change
                             </button>
                             {showAddress && (
@@ -112,7 +112,7 @@ const Cart = () => {
                                            {address.street}, {address.city}, {address.state}, {address.country}
                                         </p>
                                     ))}
-                                    <p onClick={() => Navigate('/add-address')} className="text-indigo-500 text-center cursor-pointer p-2 hover:bg-indigo-500/10">
+                                    <p onClick={() => Navigate('/add-address')} className="text-primary text-center cursor-pointer p-2 hover:bg-primary-dull/10">
                                         Add address
                                     </p>
                                 </div>
@@ -144,8 +144,9 @@ const Cart = () => {
                         </p>
                     </div>
 
-                    <button className="w-full py-3 mt-6 cursor-pointer bg-indigo-500 text-white font-medium hover:bg-indigo-600 transition">
+                    <button className="w-full py-3 mt-6 cursor-pointer bg-primary text-white font-medium hover:bg-primary-dull transition">
                        {paymentOption==="COD"?"place oder":"Proceed to checkout"}
+                       
                     </button>
                 </div>
             </div>

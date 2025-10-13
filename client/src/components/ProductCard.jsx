@@ -6,7 +6,7 @@ import { AppContext } from '../context/AppContext';
 const ProductCard = ({ product }) => {
     const [count, setCount] = React.useState(0);
     const [isAddCart, setIsAddCart] = React.useState(false);
-    const { currency, addToCart, removeFromcart, cartItems, navigate, updateCartItem } = useContext(AppContext);
+    const { currency, addToCart, removeFromCart, cartItems, navigate, updateCartItem } = useContext(AppContext);
     // console.log("cartItem[product?._id]:", cartItem && cartItem[product?._id])
 
     // console.log("product._id:", product?._id);
@@ -41,7 +41,7 @@ const ProductCard = ({ product }) => {
         console.log("count changed:", count);
         if (count === 0 && cartItems[product?._id] === 1) {
             console.log("removing item from cart");
-            removeFromcart(product?._id);
+            removeFromCart(product?._id);
             return;
         } else if (count >= 1 && cartItems[product?._id] >= 1) {
             console.log("updating cart item quantity");
