@@ -7,7 +7,6 @@ import { AppContext } from '../context/AppContext';
 const Catagories = () => {
   const {navigate}=useContext(AppContext);
  
-  
   return (
     <div className='mt-16'>
       <p className='text-2xl md:text-3xl font-medium'>categoreis</p>
