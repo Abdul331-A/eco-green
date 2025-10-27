@@ -1,5 +1,5 @@
-
-import jwt, { sign } from 'jsonwebtoken'
+import jwt from 'jsonwebtoken'; 
+const { sign } = jwt;        
 
 
 // login seller :/api/seller/login
