@@ -2,6 +2,11 @@ import { createContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { dummyProducts } from "../assets/assets";
 import toast from "react-hot-toast";
+import axios from 'axios'
+
+
+axios.defaults.withCredentials = true;
+axios.defaults.baseURL = import.meta.env.VITE_BACKEND_URL;
 
 export const AppContext = createContext();
 
@@ -18,16 +23,42 @@ export const AppContextProvider = ({ children }) => {
     const [cartItems, setCartItems] = useState({});
     const [searchQuery, setSearchQuery] = useState({});
 
-    // console.log("cartItems:", cartItems);
-
-
-
-    const fetchProducts = async () => {
-        setProducts(dummyProducts);
+    //fetch seller status
+    const fetchSeller = async () => {
+        try {
+            const { data } = await axios.get('/api/seller/is-auth');
+            if (data.success) {
+                setIsSeller(true)
+            } else {
+                setIsSeller(false)
+            }
+        } catch (error) {
+            setIsSeller(false)
+        }
     }
+
+
+    //fetch All products
+    const fetchProducts = async () => {
+        try {
+            const { data } = await axios.get('/api/product/list');
+          
+            
+            if (data.success) {
+               
+                
+                setProducts(data.products)
+            } else {
+                toast.error(data.message)
+            }
+        } catch (error) {
+            toast.error(error.message)
+        }
+    }
+
     //add product to cart
     const addToCart = (itemId) => {
-        console.log("itemId::::::", itemId);
+        // console.log("itemId::::::", itemId);
         // return
         let cartData = structuredClone(cartItems);
         console.log("hesgg:::", structuredClone(cartItems));
@@ -70,7 +101,7 @@ export const AppContextProvider = ({ children }) => {
         for (const item in cartItems) {
             totalCount += cartItems[item];
         }
-        
+
         return totalCount;
     }
     // get cart total amount
@@ -89,8 +120,8 @@ export const AppContextProvider = ({ children }) => {
 
 
     useEffect(() => {
-        console.log("fetching products");
-
+        // console.log("fetching products");
+        fetchSeller();
         fetchProducts();
     }, []);
 
@@ -98,7 +129,7 @@ export const AppContextProvider = ({ children }) => {
     const value = {
         navigate, user, setUser, isSeller, setIsSeller, showUserLogin, setShowUserLogin, products,
         currency, addToCart, removeFromCart, cartItems, updateCartItem, searchQuery, setSearchQuery,
-        getCartCount, getCartAmount
+        getCartCount, getCartAmount, axios,fetchProducts
     }
     return <AppContext.Provider value={value}>
         {children}
