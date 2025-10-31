@@ -1,35 +1,51 @@
-import React, { useContext } from 'react'
+import React, { useContext, useEffect, useState } from 'react'; // Import useState
 import { AppContext } from '../../context/AppContext';
 import axios from 'axios';
 import toast from 'react-hot-toast';
+import EditProduct from '../../components/seller/EditProduct'; // Import the EditProduct component
 
 const ProductList = () => {
-    const { products, currency, fetchProduct } = useContext(AppContext);
-    // console.log({products});
+    const { products, currency, fetchProducts } = useContext(AppContext);
+
+    // State to control the visibility of the EditProduct modal
+    const [showEditModal, setShowEditModal] = useState(false);
+    // State to store the product data that is currently being edited
+    const [currentProduct, setCurrentProduct] = useState(null);
+
     const toggleStock = async (id, inStock) => {
         try {
             const { data } = await axios.post('/api/product/stock', { id, inStock });
             if (data.success) {
-                fetchProduct()
-                toast.success(data.message)
+                fetchProducts();
+                toast.success(data.message);
             } else {
-                toast.error(data.message)
+                toast.error(data.message);
             }
-
         } catch (error) {
-            toast.error(error.message)
+            toast.error(error.message);
+            console.error("Toggle stock error:", error);
         }
-    }
+    };
 
-    const handleEdit=async(id)=>{
-        try {
-            const {data}=await axios.put(`/api/product/update/${id}`)
-            
-            
-        } catch (error) {
-            
+    const handleEdit = (product) => { // Now accepts the full product object
+        setCurrentProduct(product); // Set the product to be edited
+        setShowEditModal(true); // Open the modal
+        // console.log("Editing product:", product); // For debugging
+    };
+
+    // Function to close the modal
+    const closeEditModal = () => {
+        setShowEditModal(false);
+        setCurrentProduct(null); // Clear the current product when closing
+    };
+
+    
+      useEffect(()=>{
+        if(showEditModal === false){
+            fetchProducts();
         }
-        }
+      },[showEditModal])
+    
 
     return (
         <div className="no-scrollbar flex-1 h-[95vh] overflow-y-scroll flex flex-col justify-between">
@@ -63,20 +79,18 @@ const ProductList = () => {
                                                 onClick={() => toggleStock(product._id, !product.inStock)}
                                                 className="relative inline-flex items-center cursor-pointer text-gray-900 gap-3"
                                             >
-                                                <input type="checkbox" className="sr-only peer" />
-                                                <div className="w-12 h-7 bg-slate-300 rounded-full peer peer-checked:bg-blue-600 transition-colors duration-200"></div>
+                                                <input type="checkbox" className="sr-only peer" checked={product.inStock} readOnly /> {/* Add checked and readOnly */}
+                                                <div className="w-12 h-7 bg-slate-300 rounded-full peer peer-checked:bg-primary transition-colors duration-200"></div>
                                                 <span className="dot absolute left-1 top-1 w-5 h-5 bg-white rounded-full transition-transform duration-200 ease-in-out peer-checked:translate-x-5"></span>
                                             </label>
 
-                                            
                                             <button
-                                                onClick={() => handleEdit(product._id)}
+                                                onClick={() => handleEdit(product)} // Pass the whole product object
                                                 className="px-3 py-1 text-sm bg-primary hover:bg-primary-dull text-white rounded-md transition-colors duration-200 cursor-pointer"
                                             >
                                                 Edit
                                             </button>
                                         </div>
-
                                     </td>
                                 </tr>
                             ))}
@@ -84,8 +98,17 @@ const ProductList = () => {
                     </table>
                 </div>
             </div>
-        </div>
-    )
-}
 
-export default ProductList
+            {/* EditProduct Modal */}
+            {showEditModal && currentProduct && (
+                <EditProduct
+                    open={showEditModal}
+                    onClose={closeEditModal}
+                    product={currentProduct}
+                />
+            )}
+        </div>
+    );
+};
+
+export default ProductList;

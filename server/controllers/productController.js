@@ -66,6 +66,7 @@ export const changeStock = async (req, res) => {
 export const updateStock = async (req, res) => {
     try {
         const { id } = req.params;
+              console.log("check id",id);
 
         const productData = req.body.productData
             ? JSON.parse(req.body.productData)
@@ -74,28 +75,43 @@ export const updateStock = async (req, res) => {
         const images = req.files;
         let imageUrl = [];
 
+        console.log("imagesssss",images);
+        
+
         //if new image uploaded, send to the cloudinary
         if (images && images.length > 0) {
+            console.log("inside images>>>>")
             imageUrl = await Promise.all(
                 images.map(async (item) => {
-                    const result = await cloudinary.uploader(item.path, {
+                    const result = await cloudinary.uploader.upload(item.path, {
                         resource_type: "image",
 
                     });
+                    console.log("clodnry result",result);
+                    
                     return result.secure_url;
                 })
             )
-
+            
         }
+        console.log("images url ", imageUrl);
+        
 
         //find the product
         const existingProduct = await product.findById(id);
+  
+        console.log("check anothor",existingProduct);
+        
+        
         if (!existingProduct) {
             return res.status(404).json({ success: false, message: "product not found" });
         }
 
         //if new image upload
         const updateImages = imageUrl.length > 0 ? imageUrl : existingProduct.images;
+
+        console.log("updateed",updateImages);
+        
 
         //update fields
         const updateProduct = await product.findByIdAndUpdate(

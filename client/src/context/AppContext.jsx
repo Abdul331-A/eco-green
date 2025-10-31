@@ -15,7 +15,7 @@ export const AppContextProvider = ({ children }) => {
     const currency = import.meta.env.VITE_currency;
 
     const navigate = useNavigate();
-    const [user, setUser] = useState(true)
+    const [user, setUser] = useState(null)
     const [isSeller, setIsSeller] = useState(false);
     const [showUserLogin, setShowUserLogin] = useState(false);
     const [products, setProducts] = useState([]);
@@ -37,16 +37,30 @@ export const AppContextProvider = ({ children }) => {
         }
     }
 
+    //fetch user auth status ,user data and cart items
+    const fetchUser = async () => {
+        try {
+            const { data } = await axios.get('api/user/is-auth');
+            if (data.success) {
+                setUser(data.user)
+                setCartItems(data.user.cartItems)
+            }
+        } catch (error) {
+            setUser(null)
+        }
+    }
+
+
 
     //fetch All products
     const fetchProducts = async () => {
         try {
             const { data } = await axios.get('/api/product/list');
-          
-            
+
+
             if (data.success) {
-               
-                
+
+
                 setProducts(data.products)
             } else {
                 toast.error(data.message)
@@ -121,6 +135,7 @@ export const AppContextProvider = ({ children }) => {
 
     useEffect(() => {
         // console.log("fetching products");
+        fetchUser()
         fetchSeller();
         fetchProducts();
     }, []);
@@ -129,7 +144,7 @@ export const AppContextProvider = ({ children }) => {
     const value = {
         navigate, user, setUser, isSeller, setIsSeller, showUserLogin, setShowUserLogin, products,
         currency, addToCart, removeFromCart, cartItems, updateCartItem, searchQuery, setSearchQuery,
-        getCartCount, getCartAmount, axios,fetchProducts
+        getCartCount, getCartAmount, axios, fetchProducts
     }
     return <AppContext.Provider value={value}>
         {children}
