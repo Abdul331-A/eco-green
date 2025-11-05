@@ -6,12 +6,12 @@ import { Navigate } from 'react-router-dom';
 
 
 const Cart = () => {
-    const { products, currency, cartItems, removeFromCart, updateCartItem, getCartCount,getCartAmount } = useContext(AppContext);
+    const { products, currency, cartItems, removeFromCart, updateCartItem, getCartCount, getCartAmount, navigate, axios ,user} = useContext(AppContext);
     const [cartArray, setCartArrY] = useState([]);
-    const [address, setAddress] = useState(dummyAddress);
+    const [address, setAddress] = useState([]);
 
     const [showAddress, setShowAddress] = useState(false);
-    const [selectAddress, setSelectAddress] = useState(dummyAddress[0]);
+    const [selectAddress, setSelectAddress] = useState(null);
     const [paymentOption, setPaymentOption] = useState("COD");
 
     console.log("cartItems in cart page:", getCartCount());
@@ -27,9 +27,25 @@ const Cart = () => {
         }
         setCartArrY(tempArray);
     }
+    const getUserAddress = async () => {
+        try {
+            const { data } = await axios.get('/api/address/get');
+            if (data.success) {
+                setAddress(data.addresses)
+                if (data.address.length) {
+                    setSelectAddress(data.address[0])
+                }
+            } else {
+                toast.error(data.message)
+            }
 
-    const placeHolder=async()=>{
-        
+        } catch (error) {
+            toast.error(error.message)
+        }
+    }
+
+    const placeHolder = async () => {
+
     }
 
     useEffect(() => {
@@ -38,6 +54,11 @@ const Cart = () => {
         }
     }, [products, cartItems])
 
+    useEffect(() => {
+        if(user){
+            getUserAddress()
+        }
+    }, [user])
 
 
 
@@ -57,7 +78,7 @@ const Cart = () => {
                     </div>
 
                     {cartArray?.map((product, index) => (
-                        
+
                         <div key={index} className="grid grid-cols-[2fr_1fr_1fr] text-gray-500 items-center text-sm md:text-base font-medium pt-3">
                             <div className="flex items-center md:gap-6 gap-3">
                                 <div onClick={() => {
@@ -71,7 +92,7 @@ const Cart = () => {
                                         <p>weight: <span>{product.weight || "N/A"}</span></p>
                                         <div className='flex items-center'>
                                             <p>Qty:</p>
-                                            <select onChange={e=>updateCartItem(product._id,Number(e.target.value))} value={cartItems[product._id]} className='outline-none'>
+                                            <select onChange={e => updateCartItem(product._id, Number(e.target.value))} value={cartItems[product._id]} className='outline-none'>
                                                 {Array(cartItems[product._id] > 9 ? cartItems[product._id] : 9).fill('').map((_, index) => (
                                                     <option key={index} value={index + 1}>{index + 1}</option>
                                                 ))}
@@ -107,12 +128,12 @@ const Cart = () => {
                             </button>
                             {showAddress && (
                                 <div className="absolute top-12 py-1 bg-white border border-gray-300 text-sm w-full">
-                                    {address.map((address,index) => (
+                                    {address.map((address, index) => (
                                         <p onClick={() => setShowAddress(false)} className="text-gray-500 p-2 hover:bg-gray-100">
-                                           {address.street}, {address.city}, {address.state}, {address.country}
+                                            {address.street}, {address.city}, {address.state}, {address.country}
                                         </p>
                                     ))}
-                                    <p onClick={() => Navigate('/add-address')} className="text-primary text-center cursor-pointer p-2 hover:bg-primary-dull/10">
+                                    <p onClick={() => navigate('/add-address')} className="text-primary text-center cursor-pointer p-2 hover:bg-primary-dull/10">
                                         Add address
                                     </p>
                                 </div>
@@ -121,7 +142,7 @@ const Cart = () => {
 
                         <p className="text-sm font-medium uppercase mt-6">Payment Method</p>
 
-                        <select onChange={e=>setPaymentOption(e.target.value)} className="w-full border border-gray-300 bg-white px-3 py-2 mt-2 outline-none">
+                        <select onChange={e => setPaymentOption(e.target.value)} className="w-full border border-gray-300 bg-white px-3 py-2 mt-2 outline-none">
                             <option value="COD">Cash On Delivery</option>
                             <option value="Online">Online Payment</option>
                         </select>
@@ -137,16 +158,18 @@ const Cart = () => {
                             <span>Shipping Fee</span><span className="text-green-600">Free</span>
                         </p>
                         <p className="flex justify-between">
-                            <span>Tax (2%)</span><span>{currency}{getCartAmount()*2/100}</span>
+                            <span>Tax (2%)</span><span>{currency}{getCartAmount() * 2 / 100}</span>
                         </p>
                         <p className="flex justify-between text-lg font-medium mt-3">
-                            <span>Total Amount:</span><span>{currency}{getCartAmount()*2/100}</span>
+                            <span>Total Amount:</span>
+                            <span>{currency}{(getCartAmount() + getCartAmount() * 2 / 100).toFixed(2)}</span>
                         </p>
+
                     </div>
 
                     <button className="w-full py-3 mt-6 cursor-pointer bg-primary text-white font-medium hover:bg-primary-dull transition">
-                       {paymentOption==="COD"?"place oder":"Proceed to checkout"}
-                       
+                        {paymentOption === "COD" ? "place oder" : "Proceed to checkout"}
+
                     </button>
                 </div>
             </div>

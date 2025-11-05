@@ -1,6 +1,8 @@
-import React from 'react'; // Don't need 'useState' here, it's imported in the component
+import React, { useContext, useEffect } from 'react'; // Don't need 'useState' here, it's imported in the component
 import { assets } from '../assets/assets';
 import { useState } from 'react'; // Keep this import for the AddAddress component
+import toast from 'react-hot-toast';
+import { AppContext } from '../context/AppContext';
 
 // input field component
 const InputField = ({ type, placeholder, name, handleChange, address }) => ( // Corrected prop name
@@ -17,8 +19,11 @@ const InputField = ({ type, placeholder, name, handleChange, address }) => ( // 
 );
 
 const AddAddress = () => { // Removed 'e' from here as it's not a prop
+
+  const { axios, user, navigate } = useContext(AppContext);
+
   const [address, setAddress] = useState({
-    firstName: '', // Corrected typo: firstNsme -> firstName
+    firstName: '',
     lastName: '',
     email: '',
     street: '',
@@ -27,7 +32,7 @@ const AddAddress = () => { // Removed 'e' from here as it's not a prop
     zipcode: '',
     country: '',
     phone: '',
-  });
+});
 
   const handleChange = (e) => { // Removed 'async' as it's not performing async operations here
     const { name, value } = e.target;
@@ -38,12 +43,28 @@ const AddAddress = () => { // Removed 'e' from here as it's not a prop
     }));
   };
 
-  const onSubmitHandler = (e) => { // Removed 'async' as it's not performing async operations here
+  const onSubmitHandler = async (e) => { // Removed 'async' as it's not performing async operations here
     e.preventDefault();
+    try {
+      const { data } = await axios.post('/api/address/add', { address });
+      if (data.success) {
+        toast.success(data.message)
+        navigate('/cart')
+      } else {
+        toast.error(data.message)
+      }
+    } catch (error) {
+      toast.error(data.message)
+    }
     console.log("Form submitted with address:", address);
     // Here you would typically send the address data to an API
   };
+  useEffect(() => {
+    if(!user){
+      navigate('/cart')
+    }
 
+  }, [])
   return (
     <div className='mt-16 pb-16'>
       <p className='text-2xl md:text-3xl text-gray-500'>add shippping <span

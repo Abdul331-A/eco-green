@@ -9,7 +9,7 @@ const authUser = async (req, res, next) => {
         const tokenDecode = jwt.verify(token, process.env.JWT_SECRET)
         if (tokenDecode.id) {
             console.log("cookie token:::",tokenDecode)
-            req.body = {userId: tokenDecode?.id};
+            req.body = {...req.body,userId: tokenDecode?.id};
 
         } else {
             return res.json({ success: false, message: 'not authorized' })
