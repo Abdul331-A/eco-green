@@ -17,8 +17,9 @@ const ProductDetails = () => {
 
     const product = products.find((item) => item._id === id);
 
-    const [relatedProducts, setRelatedProducts] = useState([product?.image[0]]);
+    const [relatedProducts, setRelatedProducts] = useState([]);
 
+console.log(product);
 
 
     useEffect(() => {
@@ -27,15 +28,16 @@ const ProductDetails = () => {
             productsCopy = productsCopy.filter((item) => product.category === item.category)
             setRelatedProducts(productsCopy.slice(0, 5))
         }
-    }, [products])
+    }, [products, product])
 
     useEffect(() => {
-        setThumbnail(product?.image[0] ? product.image[0] : null);
+        setThumbnail(product?.images[0] ? product.images[0] : null);
         console.log("product changed:", product);
 
     }, [product])
 
     return product && (
+
         <div className="mt-12">
             <p>
                 <Link to={"/"}>Home</Link>/
@@ -43,6 +45,7 @@ const ProductDetails = () => {
                 <Link to={`/products/${product.category.toLowerCase()}`}> {product.category}</Link> /
                 <span className="text-primary"> {product.name}</span>
             </p>
+
 
             <div className="flex flex-col md:flex-row gap-16 mt-4">
                 <div className="flex gap-3">
@@ -71,8 +74,8 @@ const ProductDetails = () => {
                     </div>
 
                     <div className="mt-6">
-                        <p className="text-gray-500/70 line-through">MRP: {currency}</p>
-                        <p className="text-2xl font-medium">MRP: {currency}</p>
+                        <p className="text-gray-500/70 line-through">MRP: {currency}{product.offerPrice}</p>
+                        <p className="text-2xl font-medium">MRP: {currency} {product.price}</p>
                         <span className="text-gray-500/70">(inclusive of all taxes)</span>
                     </div>
 
@@ -100,11 +103,11 @@ const ProductDetails = () => {
                     <div className="w-20 h-0.5 bg-primary rounded-full mt-2"></div>
                 </div>
                 <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3 md:gap-6 lg:grid-cols-5 mt-6 w-full">
-                    {relatedProducts.filter((product)=>product.inStock).map((product,index)=>(
-                        <ProductCard key={index} product={product}/>
+                    {relatedProducts.filter((product) => product.inStock).map((product, index) => (
+                        <ProductCard key={index} product={product} />
                     ))}
                 </div>
-                <button onClick={()=>{navigate('/product');scrollTo(0,0)}} className="mx-auto cursor-pointer px-12 my-16 py-2.5 border rounded text-primary hover:bg-primary/10 transition">see more</button>
+                <button onClick={() => { navigate('/product'); scrollTo(0, 0) }} className="mx-auto cursor-pointer px-12 my-16 py-2.5 border rounded text-primary hover:bg-primary/10 transition">see more</button>
             </div>
         </div>
     );
