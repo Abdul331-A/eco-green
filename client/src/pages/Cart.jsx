@@ -2,11 +2,12 @@ import React, { useContext, useEffect, useState } from 'react'
 import { AppContext } from '../context/AppContext';
 import { assets, dummyAddress } from '../assets/assets';
 import { Navigate } from 'react-router-dom';
+import toast from 'react-hot-toast';
 
 
 
 const Cart = () => {
-    const { products, currency, cartItems, removeFromCart, updateCartItem, getCartCount, getCartAmount, navigate, axios ,user} = useContext(AppContext);
+    const { products, currency, cartItems, removeFromCart, updateCartItem, getCartCount, getCartAmount, navigate, axios ,user,setCartItems} = useContext(AppContext);
     const [cartArray, setCartArrY] = useState([]);
     const [address, setAddress] = useState([]);
 
@@ -27,13 +28,17 @@ const Cart = () => {
         }
         setCartArrY(tempArray);
     }
+
     const getUserAddress = async () => {
+        
+        
         try {
             const { data } = await axios.get('/api/address/get');
             if (data.success) {
-                setAddress(data.addresses)
-                if (data.address.length) {
-                    setSelectAddress(data.address[0])
+                console.log("address resp::", data)
+                setAddress(data.address)
+                if (data.addresses.length) {
+                    setSelectAddress(data.addresses[0])
                 }
             } else {
                 toast.error(data.message)
@@ -42,10 +47,21 @@ const Cart = () => {
         } catch (error) {
             toast.error(error.message)
         }
+        
     }
 
-    const placeHolder = async () => {
-
+    const placeOrder = async () => {
+        try {
+            if(paymentOption==="COD"){
+                const {data}=await axios.post('/api/order/cod',{
+                    userId:user._id,
+                    items:cartArray.map(item=>({product:item._id,quantity:item.quantity})),
+                    address:selectAddress._id
+                })
+            }
+        } catch (error) {
+            
+        }
     }
 
     useEffect(() => {
@@ -128,7 +144,7 @@ const Cart = () => {
                             </button>
                             {showAddress && (
                                 <div className="absolute top-12 py-1 bg-white border border-gray-300 text-sm w-full">
-                                    {address.map((address, index) => (
+                                    {address?.map((address, index) => (
                                         <p onClick={() => setShowAddress(false)} className="text-gray-500 p-2 hover:bg-gray-100">
                                             {address.street}, {address.city}, {address.state}, {address.country}
                                         </p>

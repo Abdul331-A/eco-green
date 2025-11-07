@@ -39,13 +39,16 @@ export const AppContextProvider = ({ children }) => {
 
     //fetch user auth status ,user data and cart items
     const fetchUser = async () => {
+        console.log("fetching user")
         try {
             const { data } = await axios.get('api/user/is-auth');
             if (data.success) {
-                setUser(data.user)
-                setCartItems(data.user.cartItems)
+                setUser(data?.User);
+                console.log("user data::",data);
+                // setCartItems(data.user.cartItems);
             }
         } catch (error) {
+            console.log(error)
             setUser(null)
         }
     }
@@ -134,7 +137,6 @@ export const AppContextProvider = ({ children }) => {
 
 
     useEffect(() => {
-        // console.log("fetching products");
         fetchUser()
         fetchSeller();
         fetchProducts();
@@ -154,7 +156,7 @@ export const AppContextProvider = ({ children }) => {
         if(user){
             updateCart()
         }
-    },[cartItems])
+    },[cartItems]);
 
     const value = {
         navigate, user, setUser, isSeller, setIsSeller, showUserLogin, setShowUserLogin, products,
