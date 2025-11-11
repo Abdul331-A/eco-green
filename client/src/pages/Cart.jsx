@@ -7,7 +7,7 @@ import toast from 'react-hot-toast';
 
 
 const Cart = () => {
-    const { products, currency, cartItems, removeFromCart, updateCartItem, getCartCount, getCartAmount, navigate, axios ,user,setCartItems} = useContext(AppContext);
+    const { products, currency, cartItems, removeFromCart, updateCartItem, getCartCount, getCartAmount, navigate, axios, user, setCartItems } = useContext(AppContext);
     const [cartArray, setCartArrY] = useState([]);
     const [address, setAddress] = useState([]);
 
@@ -30,13 +30,13 @@ const Cart = () => {
     }
 
     const getUserAddress = async () => {
-        
-        
+
+
         try {
             const { data } = await axios.get('/api/address/get');
             if (data.success) {
                 console.log("address resp::", data)
-                setAddress(data.address)
+                setAddress(data.addresses)
                 if (data.addresses.length) {
                     setSelectAddress(data.addresses[0])
                 }
@@ -47,20 +47,31 @@ const Cart = () => {
         } catch (error) {
             toast.error(error.message)
         }
-        
+
     }
 
     const placeOrder = async () => {
         try {
-            if(paymentOption==="COD"){
-                const {data}=await axios.post('/api/order/cod',{
-                    userId:user._id,
-                    items:cartArray.map(item=>({product:item._id,quantity:item.quantity})),
-                    address:selectAddress._id
+            console.log({cartArray});
+            
+            if (paymentOption === "COD") {
+                console.log("rdgfd", paymentOption);
+
+                const { data } = await axios.post('/api/order/cod', {
+                    userId: user?._id,
+                    items: cartArray.map(item => ({ product: item?._id, quantity: item.quantity })),
+                    address: selectAddress?._id
                 })
+                if (data.success) {
+                    toast.success(data.message)
+                    setCartItems({})
+                    navigate('/my-orders')
+                } else {
+                    toast.error(data.message)
+                }
             }
         } catch (error) {
-            
+            toast.error(error.message)
         }
     }
 
@@ -71,7 +82,7 @@ const Cart = () => {
     }, [products, cartItems])
 
     useEffect(() => {
-        if(user){
+        if (user) {
             getUserAddress()
         }
     }, [user])
@@ -79,8 +90,9 @@ const Cart = () => {
 
 
     return products.length > 0 && cartItems ? (
-        <>
 
+
+        <>
             <div className="flex flex-col md:flex-row py-16 max-w-6xl w-full px-6 mt-16">
                 <div className='flex-1 max-w-4xl'>
                     <h1 className="text-3xl font-medium mb-6">
@@ -183,10 +195,13 @@ const Cart = () => {
 
                     </div>
 
-                    <button className="w-full py-3 mt-6 cursor-pointer bg-primary text-white font-medium hover:bg-primary-dull transition">
-                        {paymentOption === "COD" ? "place oder" : "Proceed to checkout"}
-
+                    <button
+                        onClick={placeOrder}
+                        className="w-full py-3 mt-6 cursor-pointer bg-primary text-white font-medium hover:bg-primary-dull transition"
+                    >
+                        {paymentOption === "COD" ? "Place Order" : "Proceed to Checkout"}
                     </button>
+
                 </div>
             </div>
         </>

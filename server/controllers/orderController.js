@@ -5,14 +5,18 @@ import product from "../models/product.js"
 // place order COD : /api/order/cod
 export const placeOrderCOD = async (req, res) => {
     try {
-        const { userId, item: items, address } = req.body
+        const { userId, items, address } = req.body
+    console.log({items});
+    
         if (!address || items.length === 0) {
             return res.json({ success: false, message: "invalid data" })
         }
         //calculate amount using items
         let amount = await items.reduce(async (acc, item) => {
-            const Product = await product.findById({ item, product });
-            return (await acc) + product.offerPrice * item.quantity;
+            console.log("item :::",item);
+            
+            const Product = await product.findById({_id: item?.product });
+            return (await acc) + Product.offerPrice * item.quantity;
         }, 0)
         //add tax charge (2%)
         amount += Math.floor(amount * 0.02)
@@ -38,7 +42,7 @@ export const getUserOrder = async (req, res) => {
         const orders = await Order.find({
             userId,
             $or: [{ paymentType: "COD" }, { isPaid: true }]
-        }).populate("items.product address").sort({ createdAt: -1 });
+        }).populate("items.product").sort({ createdAt: -1 });
         res.json({ success: true, order: orders })
 
     } catch (error) {
