@@ -7,43 +7,13 @@ const ProductCard = ({ product }) => {
     const [count, setCount] = React.useState(0);
     const [isAddCart, setIsAddCart] = React.useState(false);
     const { currency, addToCart, removeFromCart, cartItems, navigate, updateCartItem } = useContext(AppContext);
-    // console.log("cartItem[product?._id]:", cartItem && cartItem[product?._id])
 
-    // console.log("product._id:", product?._id);
 
-    // useEffect(() => {
-    //     console.log(product, cartItem, );
-
-    //     if (!product || !product._id || !cartItem) {
-    //         return;
-    //     }
-
-    //     if (cartItem[product?._id] === undefined || cartItem[product?._id] === 0) {
-    //         setIsAddCart(true);
-    //     }
-    // }, [cartItem, product]);
-
-    // const handleQuantityChange=(qnt)=>{
-    //     if(qnt===0){
-    //         return;
-    //     }
-    //     setCount((prev)=>prev + qnt);
-
-    //     if(count === 0 || count < 0){
-    //         removeFromcart(product?._id);
-    //         return;
-    //     }
-    //     updateCartItem(product?._id, count )
-
-    // }
+    console.log("cartItems at function start:", cartItems);
 
     useEffect(() => {
         console.log("count changed:", count);
-        if (count === 0 && cartItems[product?._id] === 1) {
-            console.log("removing item from cart");
-            removeFromCart(product?._id);
-            return;
-        } else if (count >= 1 && cartItems[product?._id] >= 1) {
+        if (count >= 1 && cartItems[product?._id] > 1) {
             console.log("updating cart item quantity");
             updateCartItem(product?._id, count)
         }

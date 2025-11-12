@@ -45,7 +45,7 @@ export const AppContextProvider = ({ children }) => {
             if (data.success) {
                 setUser(data?.User);
                 console.log("user data::",data);
-                // setCartItems(data.user.cartItems);
+                setCartItems(data?.User?.cartItems||{});
             }
         } catch (error) {
             console.log(error)
@@ -76,6 +76,7 @@ export const AppContextProvider = ({ children }) => {
     //add product to cart
     const addToCart = (itemId) => {
         // console.log("itemId::::::", itemId);
+
         // return
         let cartData = structuredClone(cartItems);
         console.log("hesgg:::", structuredClone(cartItems));
@@ -150,6 +151,7 @@ export const AppContextProvider = ({ children }) => {
                     toast.error(data.message)
                 }
             } catch (error) {
+                console.log("error::", error.message)
                 toast.error(error.message)
             }
         }
