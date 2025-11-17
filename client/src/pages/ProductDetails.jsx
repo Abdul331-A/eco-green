@@ -11,7 +11,7 @@ const ProductDetails = () => {
     console.log("product in product details:", products);
 
     const [thumbnail, setThumbnail] = useState(null);
-
+    
     const { id } = useParams();
     console.log("id in product details:", id);
 
