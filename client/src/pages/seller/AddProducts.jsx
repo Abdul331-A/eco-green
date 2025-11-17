@@ -1,5 +1,4 @@
-import React, { useContext } from 'react'
-import { useState } from 'react'
+import React, { useContext, useState } from 'react'; // <-- Import useState here
 import { assets, categories } from '../../assets/assets';
 import { AppContext } from '../../context/AppContext';
 import toast from 'react-hot-toast';
@@ -13,11 +12,18 @@ const AddProducts = () => {
     const [price, setPrice] = useState('');
     const [offerPrice, setOfferPrice] = useState('');
 
+    // 1. New State for Loading 
+    const [loading, setLoading] = useState(false);
+
     const { axios } = useContext(AppContext);
 
     const onSubmitHandler = async (e) => {
+        // Prevent submission if already loading
+        if (loading) return;
+
         try {
             e.preventDefault();
+            setLoading(true); // 2. Set loading to true when submission starts
 
             const productData = {
                 name,
@@ -27,17 +33,13 @@ const AddProducts = () => {
                 offerPrice
             };
 
-            // ✅ Correct constructor name
             const formData = new FormData();
-
             formData.append('productData', JSON.stringify(productData));
 
-            // ✅ Corrected for-loop syntax
             for (let i = 0; i < files.length; i++) {
                 formData.append('images', files[i]);
             }
 
-            // ✅ Make sure your backend expects multipart/form-data
             const { data } = await axios.post('/api/product/add', formData, {
                 headers: { 'Content-Type': 'multipart/form-data' }
             });
@@ -56,13 +58,22 @@ const AddProducts = () => {
 
         } catch (error) {
             toast.error(error.message);
+        } finally {
+            setLoading(false); // 2. Reset loading to false when submission finishes
         }
     };
 
-
     return (
-        <div className="no-scrollbar flex-1 h-[95vh] overflow-y-scroll flex flex-col justify-between">
+        <div className="no-scrollbar flex-1 h-screen overflow-y-scroll flex flex-col justify-between relative">
+            {loading &&(
+                <div className='w-full h-fit absolute bg-black/25 flex items-center justify-center'>
+                    loading
+                </div>
+            )}
             <form onSubmit={onSubmitHandler} className="md:p-10 p-4 space-y-5 max-w-lg">
+
+                {/* ... other form fields (Image, Name, Description, Category, Price) ... */}
+
                 <div>
                     <p className="text-base font-medium">Product Image</p>
                     <div className="flex flex-wrap items-center gap-3 mt-2">
@@ -114,10 +125,20 @@ const AddProducts = () => {
                             id="offer-price" type="number" placeholder="0" className="outline-none md:py-2.5 py-2 px-3 rounded border border-gray-500/40" required />
                     </div>
                 </div>
-                <button className="px-8 py-2.5 bg-primary cursor-pointer text-white font-medium rounded">ADD</button>
+
+                {/* 3. Update the Button */}
+                <button
+                    disabled={loading} // Disable the button while loading
+                    className={`px-8 py-2.5 text-white font-medium rounded ${loading
+                            ? 'bg-gray-400 cursor-not-allowed' // Use a gray background for disabled state
+                            : 'bg-primary cursor-pointer' // Use primary background when active
+                        }`}
+                >
+                    {loading ? 'Adding Product...' : 'ADD'}
+                </button>
             </form>
         </div>
-    )
-}
+    );
+};
 
-export default AddProducts
+export default AddProducts;

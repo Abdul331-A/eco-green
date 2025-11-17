@@ -43,8 +43,8 @@ export const productList = async (req, res) => {
 export const productById = async (req, res) => {
     try {
         const { id } = req.body
-        const product = await product.find(id)
-        res.json({ success: true, product })
+        const prod = await product.find(id)
+        res.json({ success: true, product:prod })
     } catch (error) {
         console.log(error.message);
         res.json({ success: false, message: error.message })
@@ -128,5 +128,28 @@ export const updateStock = async (req, res) => {
         console.error(error.message);
         res.json({ success: false, message: error.message })
 
+    }
+}
+
+// delete product in list : /api/product/delete/:id
+
+export const deleteProduct=async (req,res)=>{
+
+    try {
+        const {id}=req.params
+        
+
+        console.log("idd::",id);
+        
+
+        const target = await product.findByIdAndDelete(id);
+        
+        if(!target){
+            return res.json({success:false,message:"product not found"});
+        }
+        res.json({success:true,message:"product successfully deleted"})
+    } catch (error) {
+        console.error("Error removing product:", error);
+        res.json({ success: false, message: "Failed to delete product." });
     }
 }

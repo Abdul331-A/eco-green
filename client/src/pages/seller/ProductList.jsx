@@ -12,6 +12,8 @@ const ProductList = () => {
     // State to store the product data that is currently being edited
     const [currentProduct, setCurrentProduct] = useState(null);
 
+
+
     const toggleStock = async (id, inStock) => {
         try {
             const { data } = await axios.post('/api/product/stock', { id, inStock });
@@ -39,13 +41,34 @@ const ProductList = () => {
         setCurrentProduct(null); // Clear the current product when closing
     };
 
-    
-      useEffect(()=>{
-        if(showEditModal === false){
+
+    useEffect(() => {
+        if (showEditModal === false) {
             fetchProducts();
         }
-      },[showEditModal])
-    
+    }, [showEditModal])
+
+    const deletingProduct = async (prod) => {
+        try {
+
+            // console.log({id})
+
+            if (!window.confirm("are you sure you want to permanently delete this product")) {
+                return;
+            }
+            const { data } = await axios.delete(`/api/product/delete/${prod?._id}`)
+            if (data.success) {
+                fetchProducts();
+                toast.success(data.message)
+            } else {
+                toast.error(data.message)
+            }
+        } catch (error) {
+            toast.error(data.message)
+            console.error("delete product error",error);
+        }
+    }
+
 
     return (
         <div className="no-scrollbar flex-1 h-[95vh] overflow-y-scroll flex flex-col justify-between">
@@ -89,6 +112,12 @@ const ProductList = () => {
                                                 className="px-3 py-1 text-sm bg-primary hover:bg-primary-dull text-white rounded-md transition-colors duration-200 cursor-pointer"
                                             >
                                                 Edit
+                                            </button>
+                                            <button
+                                                onClick={() => deletingProduct(product)} // Pass the whole product object
+                                                className="px-3 py-1 text-sm bg-red-500 text-white rounded-md transition-colors duration-200 cursor-pointer"
+                                            >
+                                                delete
                                             </button>
                                         </div>
                                     </td>
