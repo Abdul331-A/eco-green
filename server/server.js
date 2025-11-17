@@ -20,7 +20,7 @@ await connectDB();
 await connectCloudinary()
 
 //allow multiple orgins
-const allowedorigins=['http://localhost:5173','https://eco-green-zqge.vercel.app/']
+const allowedorigins=['http://localhost:5173','https://eco-green-zqge.vercel.app']
 
 app.post('/stripe',express.raw({type:'application/json'}),stripeWebHooks)
 
