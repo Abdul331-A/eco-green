@@ -11,7 +11,7 @@ const ProductDetails = () => {
     console.log("product in product details:", products);
 
     const [thumbnail, setThumbnail] = useState(null);
-    
+
     const { id } = useParams();
     console.log("id in product details:", id);
 
@@ -19,7 +19,7 @@ const ProductDetails = () => {
 
     const [relatedProducts, setRelatedProducts] = useState([]);
 
-console.log(product);
+    console.log({ product });
 
 
     useEffect(() => {
@@ -50,7 +50,7 @@ console.log(product);
             <div className="flex flex-col md:flex-row gap-16 mt-4">
                 <div className="flex gap-3">
                     <div className="flex flex-col gap-3">
-                        {product?.image?.map((image, index) => (
+                        {product?.images?.map((image, index) => (
                             <div key={index} onClick={() => setThumbnail(image)} className="border max-w-24 border-gray-500/30 rounded overflow-hidden cursor-pointer" >
                                 <img src={image} alt={`Thumbnail ${index + 1}`} />
                             </div>
@@ -86,14 +86,18 @@ console.log(product);
                         ))}
                     </ul>
 
-                    <div className="flex items-center mt-10 gap-4 text-base">
+                    {product?.inStock ? <div className="flex items-center mt-10 gap-4 text-base">
                         <button onClick={() => { addToCart(product._id); navigate() }} className="w-full py-3.5 cursor-pointer font-medium bg-gray-100 text-gray-800/80 hover:bg-gray-200 transition" >
                             Add to Cart
                         </button>
                         <button onClick={() => { addToCart(product._id); navigate("/cart") }} className="w-full py-3.5 cursor-pointer font-medium bg-primary text-white hover:bg-primary-dull transition" >
                             Buy now
                         </button>
-                    </div>
+                    </div> : <div>
+                        <button className="w-full py-3.5 cursor-pointer font-medium bg-gray-100 text-gray-800/80 hover:bg-gray-200 transition" >
+                            Out of stock
+                        </button>
+                    </div>}
                 </div>
             </div>
             {/* related products */}
@@ -103,7 +107,7 @@ console.log(product);
                     <div className="w-20 h-0.5 bg-primary rounded-full mt-2"></div>
                 </div>
                 <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3 md:gap-6 lg:grid-cols-5 mt-6 w-full">
-                    {relatedProducts.filter((product) => product.inStock).map((product, index) => (
+                    {relatedProducts.map((product, index) => (
                         <ProductCard key={index} product={product} />
                     ))}
                 </div>

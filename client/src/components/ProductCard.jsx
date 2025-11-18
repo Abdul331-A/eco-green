@@ -28,13 +28,17 @@ const ProductCard = ({ product }) => {
             <div className="group cursor-pointer flex items-center justify-center px-2">
                 <img
                     className="group-hover:scale-105 transition max-w-26 md:max-w-36"
-                    src={product?.images?.[0] }
-                    alt={product?.name }
+                    src={product?.images?.[0]}
+                    alt={product?.name}
                 />
             </div>
             <div className="text-gray-500/60 text-sm">
                 <p>{product?.category}</p>
-                <p className="text-gray-700 font-medium text-lg truncate w-full">{product?.name}</p>
+                {product?.inStock ?
+                    <p className="text-gray-700 font-medium text-lg truncate w-full">{product?.name}</p>
+                    :
+                    <p className="text-gray-700 font-medium text-lg truncate w-full line-through">{product?.name}</p>
+                }
                 <div className="flex items-center gap-0.5">
                     {Array(5).fill('').map((_, i) => (
                         (
@@ -47,28 +51,37 @@ const ProductCard = ({ product }) => {
                     <p className="md:text-xl text-base font-medium text-primary">
                         {currency}${product?.offerPrice}{" "} <span className="text-gray-500/60 md:text-sm text-xs line-through">${product?.price}</span>
                     </p>
-                    <div className="text-primary">
-                        {
-                            !cartItems[product?._id] ? (
-                                <button className="flex items-center justify-center gap-1 bg-primtext-primary-100 border border-primtext-primary-300 md:w-[80px] w-[64px] h-[34px] rounded text-primary-600 " onClick={() => {
-                                    addToCart(product?._id)
-                                    setCount((prev) => prev + 1)
-                                }} >
-                                    <img src={assets.cart_icon} alt="cart" className='md:w-4 w-3' />
-                                    Add
-                                </button>
-                            ) : (
-                                <div className="flex items-center justify-center gap-2 md:w-20 w-16 h-[34px] bg-primary/25 rounded select-none">
-                                    <button onClick={() => setCount((prev) => Math.max(prev - 1, 0))} className="cursor-pointer text-md px-2 h-full" >
-                                        -
+                    {product?.inStock ?
+                        <div className="text-primary">
+                            {
+                                !cartItems[product?._id] ? (
+                                    <button className="flex items-center justify-center gap-1 bg-primtext-primary-100 border border-primtext-primary-300 md:w-[80px] w-[64px] h-[34px] rounded text-primary-600 " onClick={() => {
+                                        addToCart(product?._id)
+                                        setCount((prev) => prev + 1)
+                                    }} >
+                                        <img src={assets.cart_icon} alt="cart" className='md:w-4 w-3' />
+                                        Add
                                     </button>
-                                    <span className="w-5 text-center">{cartItems[product?._id]}</span>
-                                    <button onClick={() => setCount((prev) => prev + 1)} className="cursor-pointer text-md px-2 h-full" >
-                                        +
-                                    </button>
-                                </div>
-                            )}
-                    </div>
+                                ) : (
+
+                                    <div className="flex items-center justify-center gap-2 md:w-20 w-16 h-[34px] bg-primary/25 rounded select-none">
+                                        <button onClick={() => setCount((prev) => Math.max(prev - 1, 0))} className="cursor-pointer text-md px-2 h-full" >
+                                            -
+                                        </button>
+                                        <span className="w-5 text-center">{cartItems[product?._id]}</span>
+                                        <button onClick={() => setCount((prev) => prev + 1)} className="cursor-pointer text-md px-2 h-full" >
+                                            +
+                                        </button>
+                                    </div>
+
+                                )}
+                        </div> :
+                        <div>
+                            <button className="w-full py-3.5 cursor-pointer font-medium text-sm bg-gray-100 text-gray-800/80 hover:bg-gray-200 transition" >
+                                Out of stock
+                            </button>
+                        </div>
+                    }
                 </div>
             </div>
         </div>
