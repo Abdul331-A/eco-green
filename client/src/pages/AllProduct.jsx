@@ -3,7 +3,7 @@ import { AppContext } from '../context/AppContext';
 import ProductCard from '../components/ProductCard';
 
 const AllProduct = () => {
-    const { products,searchQuery } = React.useContext(AppContext);
+    const { products, searchQuery } = React.useContext(AppContext);
     console.log("products in all product:", products);
 
     useEffect(() => {
@@ -18,8 +18,8 @@ const AllProduct = () => {
             setFilterProducts(products);
         }
     }, [products, searchQuery]);
-    
-    const [filterptoducts,setFilterProducts]=useState([]);
+
+    const [filterptoducts, setFilterProducts] = useState([]);
     return (
         <div className='mt-16 flex flex-col gap-6'>
             <div className='flex flex-col gap-2 items-end w-max'>
@@ -28,12 +28,21 @@ const AllProduct = () => {
                 </div>
             </div>
 
-            <div className='mt-6 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 lg:gap-5'>
-                {filterptoducts.map((products,index)=>(
-                    <ProductCard key={index} product={products}/>
-
+            <div className="mt-6 
+                                grid 
+                                grid-cols-1 
+                                sm:grid-cols-2 
+                                md:grid-cols-3 
+                                lg:grid-cols-4 
+                                xl:grid-cols-5 
+                                gap-3 
+                                lg:gap-5"
+            >
+                {filterptoducts.map((product, index) => (
+                    <ProductCard key={index} product={product} />
                 ))}
             </div>
+
         </div>
     )
 }
