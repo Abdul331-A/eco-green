@@ -46,7 +46,6 @@ export const login = async (req, res) => {
     try {
         const { email, password } = req.body;
 
-
         if (!email || !password)
             return res.json({ success: false, message: 'email and password are required' });
 
@@ -65,7 +64,7 @@ export const login = async (req, res) => {
             sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'strict', // CSRF protection
             maxAge: 7 * 24 * 60 * 60 * 1000,  //cookie expiration time (corrected)
         })
-        return res.json({ success: true, User: { email: User.email, name: User.name } }) // Removed password from response for security
+        return res.json({ success: true, User: { email: User.email, name: User.name }, message: 'login succesfully completetd' }) // Removed password from response for security
 
     } catch (error) {
         console.log(error.message);
@@ -84,6 +83,7 @@ export const isAuth = async (req, res) => {
             return res.json({ success: false, message: 'User not found' });
         }
         return res.json({ success: true, User })
+
     } catch (error) {
         console.log(error.message);
         res.json({ success: false, message: error.message });

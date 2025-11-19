@@ -22,11 +22,15 @@ const Login = () => {
             console.log("response data",data);
             
             if (data.success) {
+
+                toast.success(data.message)
                 navigate('/')
                 console.log(data.User);
                 
                 setUser(data.User)
                 setShowUserLogin(false)
+            }else{
+                toast.error(data.message)
             }
         } catch (error) {
             toast.error(error.message)
